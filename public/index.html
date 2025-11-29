@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SleekPair Generator</title>
+<style>
+    body {
+        margin: 0;
+        background: #0d1117;
+        font-family: Arial, sans-serif;
+        color: #e6edf3;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    .card {
+        background: #161b22;
+        padding: 40px;
+        border-radius: 16px;
+        width: 350px;
+        box-shadow: 0px 0px 20px rgba(0,0,0,0.4);
+        text-align: center;
+    }
+    h1 {
+        font-size: 26px;
+        margin-bottom: 10px;
+    }
+    button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 20px;
+        background: #238636;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        color: white;
+        cursor: pointer;
+    }
+    button:hover {
+        background: #2ea043;
+    }
+    .output {
+        margin-top: 20px;
+        display: none;
+        background: #0b0f14;
+        padding: 15px;
+        border-radius: 10px;
+    }
+    img {
+        margin-top: 15px;
+        width: 180px;
+    }
+</style>
+</head>
+<body>
+<div class="card">
+    <h1>SleekPair Generator</h1>
+    <p>Generate secure WhatsApp pairing codes instantly</p>
+    <button onclick="generate()">Generate Code</button>
+    <div id="output" class="output">
+        <h3>Pair Code:</h3>
+        <p id="pair"></p>
+        <h3>QR Code:</h3>
+        <img id="qr" src="" />
+    </div>
+</div>
+
+<script>
+async function generate() {
+    const res = await fetch("/generate");
+    const data = await res.json();
+
+    document.getElementById("pair").innerText = data.pairCode;
+    document.getElementById("qr").src = data.qrCode;
+    document.getElementById("output").style.display = "block";
+}
+</script>
+</body>
+</html>
