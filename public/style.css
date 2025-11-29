@@ -1,47 +1,127 @@
+/* --- Global ---- */
 body {
     margin: 0;
-    background: #0d1117;
-    font-family: Arial, sans-serif;
-    color: #e6edf3;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(135deg, #0d1117, #1e1b4b);
+    color: #ffffff;
+    overflow-x: hidden;
 }
+
+/* Floating particles */
+#particles {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    top: 0;
+    left: 0;
+}
+
+/* Animated WhatsApp Logo */
+.logo-float {
+    width: 70px;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    animation: float 3s ease-in-out infinite alternate;
+    opacity: 0.9;
+}
+
+@keyframes float {
+    from { transform: translateY(0); }
+    to { transform: translateY(-15px); }
+}
+
+/* Card */
 .card {
-    background: #161b22;
-    padding: 40px;
-    border-radius: 16px;
+    background: rgba(22, 27, 34, 0.85);
     width: 380px;
-    box-shadow: 0px 0px 20px rgba(0,0,0,0.4);
+    margin: 70px auto;
+    padding: 35px;
+    border-radius: 22px;
+    text-align: center;
+    box-shadow: 0 0 25px rgba(0,255,136,0.25);
+    backdrop-filter: blur(8px);
+}
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+
+/* Inputs */
+input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: #111827;
+    color: white;
+    margin-top: 10px;
     text-align: center;
 }
+
+/* Buttons */
 button {
     width: 100%;
     padding: 12px;
-    margin-top: 20px;
-    background: #238636;
+    background: #22c55e;
     border: none;
-    border-radius: 8px;
-    font-size: 16px;
+    border-radius: 12px;
     color: white;
+    font-size: 17px;
+    margin-top: 18px;
     cursor: pointer;
+    transition: 0.2s;
 }
+
 button:hover {
-    background: #2ea043;
+    transform: scale(1.02);
+    background: #16a34a;
 }
-.features {
-    margin: 15px 0;
-    text-align: left;
-}
+
+/* Output container */
 .output {
-    margin-top: 20px;
+    background: #111827;
+    padding: 20px;
+    border-radius: 14px;
+    margin-top: 22px;
     display: none;
-    background: #0b0f14;
-    padding: 15px;
-    border-radius: 10px;
 }
-img {
-    margin-top: 15px;
-    width: 180px;
+
+/* Loader */
+.loader {
+    border: 4px solid #1f2937;
+    border-top: 4px solid #22c55e;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin: 20px auto;
+    display: none;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
+
+/* Light mode */
+.light {
+    background: linear-gradient(135deg, #e9e9f7, #ffffff);
+    color: #000;
+}
+
+.light .card {
+    background: rgba(255,255,255,0.8);
+    color: #000;
+}
+
+.toggle-mode {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 10px 15px;
+    background: #2563eb;
+    border-radius: 10px;
+    cursor: pointer;
 }
