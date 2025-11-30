@@ -1,82 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>SLEEK MD ✨ — Real Pair Code Generator</title>
-<link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLEEK MD ✨ — Advanced Pair Generator</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+
 </head>
 <body>
-<div class="wrap">
-  <div class="card">
+
+<!-- Floating neon particles -->
+<canvas id="particles"></canvas>
+
+<div class="card">
+
+    <!-- Top controls -->
+    <div class="top-controls">
+        <button class="small-btn" onclick="toggleMode()">🌗</button>
+        <button class="small-btn" onclick="playMusic()">🎵</button>
+    </div>
+
+    <!-- Branding -->
     <div class="brand">
-      <div class="logo">✨</div>
-      <h1>SLEEK MD</h1>
+        <div class="brand-logo">✨</div>
+        <h1>SLEEK MD</h1>
     </div>
 
-    <p class="subtitle">Secure WhatsApp pairing — enter the phone and your secret token.</p>
+    <p class="subtitle">Generate REAL WhatsApp pairing codes & download session securely.</p>
 
-    <label class="field">
-      <input id="phone" placeholder="Phone (e.g. 2547XXXXXXXX)" />
-    </label>
-
-    <label class="field">
-      <input id="token" placeholder="Secret token (SLEEK_FDROID)" />
-    </label>
-
-    <button id="btn">Generate Pair Code</button>
-
-    <div id="status" class="status">Ready</div>
-
-    <div id="result" class="result" style="display:none;">
-      <h2 id="pairText"></h2>
-      <img id="qr" alt="QR Code" />
-      <p class="hint">Open WhatsApp → Linked devices → Link a device → Use the code or scan the QR.</p>
+    <!-- Phone -->
+    <div class="field">
+        <input id="phone" placeholder="2547XXXXXXXX">
     </div>
-  </div>
+
+    <!-- Token -->
+    <div class="field">
+        <input id="token" placeholder="Secret Token (SLEEK_FDROID)">
+    </div>
+
+    <!-- Generate button -->
+    <button id="btn" onclick="generate()">Generate Pair Code</button>
+
+    <!-- Loader -->
+    <div id="loader" style="display:none;">
+        <div class="loader"></div>
+        <p class="loading-text">Generating secure pairing code...</p>
+    </div>
+
+    <!-- Output block -->
+    <div id="output" class="output" style="display:none;">
+        <h3>Pair Code</h3>
+        <h2 id="pair"></h2>
+
+        <img id="qr" alt="QR Code">
+
+        <h3>Session ID</h3>
+        <p id="sessionIdDisplay" class="sid"></p>
+
+        <button class="download-btn" onclick="downloadSession()">Download Session ZIP</button>
+    </div>
+
 </div>
 
-<audio id="sound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+<!-- Background Music -->
+<audio id="bgm" loop>
+    <source src="https://files.catbox.moe/gc9k0g.mp3" type="audio/mpeg">
+</audio>
 
+<!-- Success Sound -->
+<audio id="ding">
+    <source src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" type="audio/ogg">
+</audio>
+
+<script src="script.js"></script>
+
+<!-- Particle Background Script -->
 <script>
-const btn = document.getElementById("btn");
-const phoneEl = document.getElementById("phone");
-const tokenEl = document.getElementById("token");
-const status = document.getElementById("status");
-const result = document.getElementById("result");
-const pairText = document.getElementById("pairText");
-const qr = document.getElementById("qr");
-const sound = document.getElementById("sound");
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+let w, h;
+let particles = [];
 
-btn.addEventListener("click", async () => {
-  const phone = phoneEl.value.trim();
-  const token = tokenEl.value.trim();
-  if (!phone || !token) { alert("Please enter phone and token"); return; }
+function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+}
+window.onresize = resize;
+resize();
 
-  status.textContent = "Requesting pair code...";
-  btn.disabled = true;
-
-  try {
-    const res = await fetch(`/api/pair-code?phone=${encodeURIComponent(phone)}&token=${encodeURIComponent(token)}`);
-    const data = await res.json();
-    if (data.error) {
-      status.textContent = "Error: " + data.error;
-      btn.disabled = false;
-      return;
+class Particle {
+    constructor() { this.init(); }
+    init() {
+        this.x = Math.random() * w;
+        this.y = Math.random() * h;
+        this.size = Math.random() * 2 + 1;
+        this.speed = Math.random() * 0.9 + 0.2;
+        this.alpha = Math.random() * 0.6 + 0.3;
     }
-    // success
-    pairText.innerText = data.pairCode;
-    qr.src = data.qrCode;
-    result.style.display = "block";
-    status.textContent = "Pair code generated (valid briefly)";
-    sound.play();
-  } catch (err) {
-    console.error(err);
-    status.textContent = "Network or server error";
-  } finally {
-    btn.disabled = false;
-  }
-});
+    update() {
+        this.y += this.speed;
+        if (this.y > h) this.init();
+    }
+    draw() {
+        ctx.globalAlpha = this.alpha;
+        ctx.fillStyle = "#ff0088";
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+for (let i = 0; i < 150; i++) particles.push(new Particle());
+
+function animate() {
+    ctx.clearRect(0, 0, w, h);
+    particles.forEach(p => { p.update(); p.draw(); });
+    requestAnimationFrame(animate);
+}
+animate();
 </script>
+
 </body>
 </html>
