@@ -1,54 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SleekPair Generator</title>
-
-<link rel="stylesheet" href="style.css">
-
-<!-- Particles.js -->
-<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SLEEK MD ✨ — Real Pair Code Generator</title>
+<link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-
-<canvas id="particles"></canvas>
-
-<img src="images/whatsapp.png" class="logo-float">
-
-<div class="toggle-mode" onclick="toggleMode()">🌗 Mode</div>
-
-<div class="card">
-    <h1>SleekPair Generator</h1>
-    <p>Generate secure WhatsApp pairing codes instantly</p>
-
-    <button onclick="playMusic()">🎵 Play Music</button>
-    <audio id="bgm" src="https://files.catbox.moe/70x46x.mp3"></audio>
-
-    <input type="text" id="phone" placeholder="Enter WhatsApp Number (e.g. +2349123456789)">
-
-    <button onclick="generate()">Generate Pair Code</button>
-
-    <div id="loader" class="loader"></div>
-
-    <div id="output" class="output">
-        <h3>Pair Code:</h3>
-        <p id="pair"></p>
-
-        <h3>QR Code:</h3>
-        <img id="qr" width="200">
-
-        <button onclick="downloadQR()">Download QR Code</button>
+<div class="wrap">
+  <div class="card">
+    <div class="brand">
+      <div class="logo">✨</div>
+      <h1>SLEEK MD</h1>
     </div>
+
+    <p class="subtitle">Secure WhatsApp pairing — enter the phone and your secret token.</p>
+
+    <label class="field">
+      <input id="phone" placeholder="Phone (e.g. 2547XXXXXXXX)" />
+    </label>
+
+    <label class="field">
+      <input id="token" placeholder="Secret token (SLEEK_FDROID)" />
+    </label>
+
+    <button id="btn">Generate Pair Code</button>
+
+    <div id="status" class="status">Ready</div>
+
+    <div id="result" class="result" style="display:none;">
+      <h2 id="pairText"></h2>
+      <img id="qr" alt="QR Code" />
+      <p class="hint">Open WhatsApp → Linked devices → Link a device → Use the code or scan the QR.</p>
+    </div>
+  </div>
 </div>
 
-<script src="script.js"></script>
+<audio id="sound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
 
 <script>
-// Particles background
-particlesJS.load('particles', 'https://raw.githubusercontent.com/VincentGarreau/particles.js/master/demo/particles.json');
-</script>
+const btn = document.getElementById("btn");
+const phoneEl = document.getElementById("phone");
+const tokenEl = document.getElementById("token");
+const status = document.getElementById("status");
+const result = document.getElementById("result");
+const pairText = document.getElementById("pairText");
+const qr = document.getElementById("qr");
+const sound = document.getElementById("sound");
 
+btn.addEventListener("click", async () => {
+  const phone = phoneEl.value.trim();
+  const token = tokenEl.value.trim();
+  if (!phone || !token) { alert("Please enter phone and token"); return; }
+
+  status.textContent = "Requesting pair code...";
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(`/api/pair-code?phone=${encodeURIComponent(phone)}&token=${encodeURIComponent(token)}`);
+    const data = await res.json();
+    if (data.error) {
+      status.textContent = "Error: " + data.error;
+      btn.disabled = false;
+      return;
+    }
+    // success
+    pairText.innerText = data.pairCode;
+    qr.src = data.qrCode;
+    result.style.display = "block";
+    status.textContent = "Pair code generated (valid briefly)";
+    sound.play();
+  } catch (err) {
+    console.error(err);
+    status.textContent = "Network or server error";
+  } finally {
+    btn.disabled = false;
+  }
+});
+</script>
 </body>
 </html>
